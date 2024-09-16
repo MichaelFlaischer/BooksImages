@@ -46,7 +46,6 @@ function save(book) {
   }
 }
 
-// Add books function to add multiple books
 function addBooks(books) {
   return Promise.all(books.map((book) => storageService.post(BOOK_KEY, book)))
     .then((results) => {
@@ -96,40 +95,81 @@ function _createBooks() {
   let books = utilService.loadFromStorage(BOOK_KEY)
   if (!books || !books.length) {
     books = []
-    books.push(
-      _createBook(
-        'Metus Hendrerit',
-        'mi est eros dapibus himenaeos',
-        ['Barbara Cartland'],
-        1999,
-        'placerat nisi sodales suscipit tellus',
-        713,
-        ['Computers', 'Hack'],
-        'http://ca.org/books-photos/20.jpg',
-        'en',
-        { amount: 109, currencyCode: 'EUR', isOnSale: false }
-      )
-    )
-    books.push(
-      _createBook(
-        'Lorem Ipsum',
-        'some subtitle',
-        ['John Doe'],
-        2005,
-        'lorem ipsum dolor sit amet',
-        500,
-        ['Fiction', 'Adventure'],
-        'http://ca.org/books-photos/21.jpg',
-        'en',
-        { amount: 45, currencyCode: 'USD', isOnSale: true }
-      )
-    )
+    for (let i = 0; i < 20; i++) {
+      books.push(_createBook())
+    }
     utilService.saveToStorage(BOOK_KEY, books)
   }
 }
 
-function _createBook(title, subtitle, authors, publishedDate, description, pageCount, categories, thumbnail, language, listPrice) {
-  const book = getEmptyBook(title, subtitle, authors, publishedDate, description, pageCount, categories, thumbnail, language, listPrice)
-  book.id = utilService.makeId()
-  return book
+function _createBook() {
+  const titles = [
+    'The Great Gatsby',
+    'To Kill a Mockingbird',
+    '1984',
+    'The Catcher in the Rye',
+    'The Hobbit',
+    'Pride and Prejudice',
+    'Moby Dick',
+    'War and Peace',
+    'Crime and Punishment',
+    'Ulysses',
+    'The Odyssey',
+    'Jane Eyre',
+    'Brave New World',
+    'The Iliad',
+    'Wuthering Heights',
+    'Hamlet',
+    'Frankenstein',
+    'Dracula',
+    'Don Quixote',
+    'A Tale of Two Cities',
+  ]
+
+  const authors = [
+    'F. Scott Fitzgerald',
+    'Harper Lee',
+    'George Orwell',
+    'J.D. Salinger',
+    'J.R.R. Tolkien',
+    'Jane Austen',
+    'Herman Melville',
+    'Leo Tolstoy',
+    'Fyodor Dostoevsky',
+    'James Joyce',
+    'Homer',
+    'Charlotte Bronte',
+    'Aldous Huxley',
+    'Homer',
+    'Emily Bronte',
+    'William Shakespeare',
+    'Mary Shelley',
+    'Bram Stoker',
+    'Miguel de Cervantes',
+    'Charles Dickens',
+  ]
+
+  const categories = ['Fiction', 'Literature', 'Classic', 'Adventure', 'Fantasy']
+  const language = ['en', 'es', 'fr', 'de', 'it']
+  const randomAmount = utilService.getRandomIntInclusive(20, 150)
+  const randomCurrency = ['USD', 'EUR', 'ILS']
+  const randomSale = [true, false]
+
+  return {
+    id: utilService.makeId(),
+    title: titles[utilService.getRandomIntInclusive(0, titles.length - 1)],
+    subtitle: 'A thrilling read',
+    authors: [authors[utilService.getRandomIntInclusive(0, authors.length - 1)]],
+    publishedDate: utilService.getRandomIntInclusive(1950, 2023),
+    description: 'An exciting journey through time and space.',
+    pageCount: utilService.getRandomIntInclusive(100, 1000),
+    categories: [categories[utilService.getRandomIntInclusive(0, categories.length - 1)]],
+    thumbnail: `http://ca.org/books-photos/${utilService.getRandomIntInclusive(1, 20)}.jpg`,
+    language: language[utilService.getRandomIntInclusive(0, language.length - 1)],
+    listPrice: {
+      amount: randomAmount,
+      currencyCode: randomCurrency[utilService.getRandomIntInclusive(0, randomCurrency.length - 1)],
+      isOnSale: randomSale[utilService.getRandomIntInclusive(0, randomSale.length - 1)],
+    },
+  }
 }
