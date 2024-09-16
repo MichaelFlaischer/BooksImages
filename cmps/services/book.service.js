@@ -26,6 +26,7 @@ function query() {
     if (gFilterBy.minPrice) {
       books = books.filter((book) => book.listPrice.amount >= gFilterBy.minPrice)
     }
+
     return books
   })
 }

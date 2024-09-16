@@ -3,8 +3,6 @@ import { Home } from './cmps/Home.jsx'
 import { AboutUs } from './cmps/AboutUs.jsx'
 import { BookIndex } from './cmps/BookIndex.jsx'
 
-import { bookService } from './services/book.service.js'
-
 export function App() {
   const { useState } = React
 
