@@ -1,3 +1,5 @@
+import { LongTxt } from './LongTxt.jsx'
+
 export function BookDetails({ book, closeFunc }) {
   const getPageCountText = () => {
     if (book.pageCount > 500) return 'Serious Reading'
@@ -45,7 +47,9 @@ export function BookDetails({ book, closeFunc }) {
           </tr>
           <tr>
             <td>Description:</td>
-            <td>{book.description}</td>
+            <td>
+              <LongTxt txt={book.description}></LongTxt>
+            </td>
           </tr>
           <tr>
             <td>Categories:</td>
