@@ -51,78 +51,138 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
     <section className='book-edit'>
       <h2>{bookId ? 'Edit Book' : 'Add New Book'}</h2>
       <form onSubmit={(ev) => ev.preventDefault()}>
-        <label>
-          Title:
-          <input type='text' name='title' value={book.title} onChange={handleChange} />
-        </label>
-        <label>
-          Subtitle:
-          <input type='text' name='subtitle' value={book.subtitle} onChange={handleChange} />
-        </label>
-        <label>
-          Authors:
-          <input
-            type='text'
-            name='authors'
-            value={book.authors.join(', ')}
-            onChange={(ev) => handleChange({ target: { name: 'authors', value: ev.target.value.split(', ') } })}
-          />
-        </label>
-        <label>
-          Published Date:
-          <input type='number' name='publishedDate' value={book.publishedDate} onChange={handleChange} />
-        </label>
-        <label>
-          Description:
-          <textarea name='description' value={book.description} onChange={handleChange} />
-        </label>
-        <label>
-          Page Count:
-          <input type='number' name='pageCount' value={book.pageCount} onChange={handleChange} />
-        </label>
-        <label>
-          Categories:
-          <input
-            type='text'
-            name='categories'
-            value={book.categories.join(', ')}
-            onChange={(ev) => handleChange({ target: { name: 'categories', value: ev.target.value.split(', ') } })}
-          />
-        </label>
-        <label>
-          Thumbnail:
-          <input type='text' name='thumbnail' value={book.thumbnail} onChange={handleChange} />
-        </label>
-        <label>
-          Language:
-          <input type='text' name='language' value={book.language} onChange={handleChange} />
-        </label>
-        <label>
-          List Price:
-          <input
-            type='number'
-            name='amount'
-            value={book.listPrice.amount}
-            onChange={(ev) => handleChange({ target: { name: 'listPrice', value: { ...book.listPrice, amount: +ev.target.value } } })}
-          />
-          <select
-            name='currencyCode'
-            value={book.listPrice.currencyCode}
-            onChange={(ev) => handleChange({ target: { name: 'listPrice', value: { ...book.listPrice, currencyCode: ev.target.value } } })}
-          >
-            <option value='USD'>USD</option>
-            <option value='EUR'>EUR</option>
-            <option value='ILS'>ILS</option>
-          </select>
-          <label>
-            On Sale:
-            <input
-              type='checkbox'
-              checked={book.listPrice.isOnSale}
-              onChange={(ev) => handleChange({ target: { name: 'listPrice', value: { ...book.listPrice, isOnSale: ev.target.checked } } })}
-            />
-          </label>
-        </label>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <label>Title:</label>
+              </td>
+              <td>
+                <input type='text' name='title' value={book.title} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Subtitle:</label>
+              </td>
+              <td>
+                <input type='text' name='subtitle' value={book.subtitle} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Authors:</label>
+              </td>
+              <td>
+                <input
+                  type='text'
+                  name='authors'
+                  value={book.authors.join(', ')}
+                  onChange={(ev) => handleChange({ target: { name: 'authors', value: ev.target.value.split(', ') } })}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Published Date:</label>
+              </td>
+              <td>
+                <input type='number' name='publishedDate' value={book.publishedDate} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Description:</label>
+              </td>
+              <td>
+                <textarea name='description' value={book.description} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Page Count:</label>
+              </td>
+              <td>
+                <input type='number' name='pageCount' value={book.pageCount} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Categories:</label>
+              </td>
+              <td>
+                <input
+                  type='text'
+                  name='categories'
+                  value={book.categories.join(', ')}
+                  onChange={(ev) => handleChange({ target: { name: 'categories', value: ev.target.value.split(', ') } })}
+                />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Thumbnail:</label>
+              </td>
+              <td>
+                <input type='text' name='thumbnail' value={book.thumbnail} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Language:</label>
+              </td>
+              <td>
+                <input type='text' name='language' value={book.language} onChange={handleChange} />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>List Price:</label>
+              </td>
+              <td>
+                <input
+                  type='number'
+                  name='amount'
+                  value={book.listPrice.amount}
+                  onChange={(ev) =>
+                    handleChange({
+                      target: { name: 'listPrice', value: { ...book.listPrice, amount: +ev.target.value } },
+                    })
+                  }
+                />
+              </td>
+              <td>
+                <select
+                  name='currencyCode'
+                  value={book.listPrice.currencyCode}
+                  onChange={(ev) =>
+                    handleChange({
+                      target: { name: 'listPrice', value: { ...book.listPrice, currencyCode: ev.target.value } },
+                    })
+                  }
+                >
+                  <option value='USD'>USD</option>
+                  <option value='EUR'>EUR</option>
+                  <option value='ILS'>ILS</option>
+                </select>
+              </td>
+              <td>
+                <label>
+                  On Sale:
+                  <input
+                    type='checkbox'
+                    checked={book.listPrice.isOnSale}
+                    onChange={(ev) =>
+                      handleChange({
+                        target: { name: 'listPrice', value: { ...book.listPrice, isOnSale: ev.target.checked } },
+                      })
+                    }
+                  />
+                </label>
+              </td>
+            </tr>
+          </tbody>
+        </table>
         <div className='action-buttons'>
           <button onClick={handleSave}>Save</button>
           <button onClick={handleCancel}>Cancel</button>

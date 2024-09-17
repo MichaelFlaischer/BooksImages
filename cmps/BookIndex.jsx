@@ -56,7 +56,7 @@ export function BookIndex() {
   if (!booksList) return <div>Loading...</div>
 
   return (
-    <section>
+    <section className='book-index'>
       {editBook ? (
         <React.Fragment>
           <h2>{editBook.id ? 'Edit Book' : 'Add Book'}</h2>
@@ -70,7 +70,9 @@ export function BookIndex() {
       ) : (
         <React.Fragment>
           <h2>BookIndex</h2>
-          <button onClick={addNewBook}>Add New Book</button>
+          <button className='btn-add-book' onClick={addNewBook}>
+            Add New Book
+          </button>
           <BookFilter books={booksList} setFilteredBooks={updateBooksToShow} />
           <BookList books={filteredBooks} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} />
         </React.Fragment>

@@ -4,7 +4,7 @@ export function BookList({ books, showfunc, closeUpdateFunc }) {
   return (
     <ul className='book-list'>
       {books.map((book) => (
-        <BookPreview key={book.id} book={book} showfunc={showfunc} closeUpdateFunc={closeUpdateFunc} />
+        <BookPreview key={book.id} book={book} showfunc={showfunc} closeUpdateFunc={closeUpdateFunc} className='book-list-item' />
       ))}
     </ul>
   )

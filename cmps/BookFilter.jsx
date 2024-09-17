@@ -57,8 +57,8 @@ export function BookFilter({ books, setFilteredBooks }) {
   }
 
   return (
-    <section className='book-filter'>
-      <h2>Filter Books</h2>
+    <details className='book-filter'>
+      <summary className='book-filter-summary'>Filter Books</summary>
       <form>
         <table>
           <tbody>
@@ -141,6 +141,6 @@ export function BookFilter({ books, setFilteredBooks }) {
           </tbody>
         </table>
       </form>
-    </section>
+    </details>
   )
 }
