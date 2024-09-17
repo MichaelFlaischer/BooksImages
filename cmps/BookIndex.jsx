@@ -53,10 +53,23 @@ export function BookIndex() {
     setEditBook(bookService.getEmptyBook())
   }
 
+  function deleteBook(bookId) {
+    bookService
+      .remove(bookId)
+      .then(() => {
+        const updatedBooks = booksList.filter((book) => book.id !== bookId)
+        setBooksList(updatedBooks)
+        setFilteredBooks(updatedBooks)
+      })
+      .catch((err) => {
+        console.log('Error deleting book:', err)
+      })
+  }
+
   if (!booksList) return <div>Loading...</div>
 
   return (
-    <section className='book-index'>
+    <section>
       {editBook ? (
         <React.Fragment>
           <h2>{editBook.id ? 'Edit Book' : 'Add Book'}</h2>
@@ -70,11 +83,9 @@ export function BookIndex() {
       ) : (
         <React.Fragment>
           <h2>BookIndex</h2>
-          <button className='btn-add-book' onClick={addNewBook}>
-            Add New Book
-          </button>
+          <button onClick={addNewBook}>Add New Book</button>
           <BookFilter books={booksList} setFilteredBooks={updateBooksToShow} />
-          <BookList books={filteredBooks} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} />
+          <BookList books={filteredBooks} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} onDelete={deleteBook} />
         </React.Fragment>
       )}
     </section>

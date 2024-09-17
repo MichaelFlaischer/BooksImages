@@ -1,15 +1,14 @@
-export function BookPreview({ book, showfunc, closeUpdateFunc }) {
+export function BookPreview({ book, showfunc, closeUpdateFunc, onDelete }) {
   return (
-    <li className='book-item'>
-      <h3 className='book-item-title'>{book.title}</h3>
-      <p className='book-item-authors'>by {book.authors.join(', ')}</p>
-      <p className='book-item-price'>
+    <li className='book-preview book-item'>
+      <h3>{book.title}</h3>
+      <p>by {book.authors.join(', ')}</p>
+      <p>
         Price: {book.listPrice.amount} {book.listPrice.currencyCode}
       </p>
-      <div className='book-item-actions'>
-        <button onClick={() => showfunc(book)}>Show Details</button>
-        <button onClick={() => closeUpdateFunc(book)}>Edit</button>
-      </div>
+      <button onClick={() => showfunc(book)}>Show Details</button>
+      <button onClick={() => closeUpdateFunc(book)}>Edit</button>
+      <button onClick={() => onDelete(book.id)}>Delete</button>
     </li>
   )
 }

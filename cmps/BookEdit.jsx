@@ -4,12 +4,17 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
   const { useEffect, useState } = React
 
   const [book, setBook] = useState(bookService.getEmptyBook())
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true)
 
   useEffect(() => {
     if (bookId) {
       loadBook()
     }
   }, [bookId])
+
+  useEffect(() => {
+    checkIfCanSave()
+  }, [book])
 
   function loadBook() {
     bookService
@@ -28,7 +33,26 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
     }))
   }
 
+  function checkIfCanSave() {
+    const requiredFields = [
+      book.title,
+      book.subtitle,
+      book.authors.length > 0,
+      book.publishedDate,
+      book.description,
+      book.pageCount,
+      book.categories.length > 0,
+      book.thumbnail,
+      book.language,
+      book.listPrice.amount,
+    ]
+
+    const allFieldsFilled = requiredFields.every((field) => Boolean(field))
+    setIsSaveDisabled(!allFieldsFilled)
+  }
+
   function handleSave() {
+    if (isSaveDisabled) return
     bookService
       .save(book)
       .then(() => {
@@ -58,7 +82,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Title:</label>
               </td>
               <td>
-                <input type='text' name='title' value={book.title} onChange={handleChange} />
+                <input type='text' name='title' value={book.title} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -66,7 +90,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Subtitle:</label>
               </td>
               <td>
-                <input type='text' name='subtitle' value={book.subtitle} onChange={handleChange} />
+                <input type='text' name='subtitle' value={book.subtitle} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -79,6 +103,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                   name='authors'
                   value={book.authors.join(', ')}
                   onChange={(ev) => handleChange({ target: { name: 'authors', value: ev.target.value.split(', ') } })}
+                  required
                 />
               </td>
             </tr>
@@ -87,7 +112,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Published Date:</label>
               </td>
               <td>
-                <input type='number' name='publishedDate' value={book.publishedDate} onChange={handleChange} />
+                <input type='number' name='publishedDate' value={book.publishedDate} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -95,7 +120,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Description:</label>
               </td>
               <td>
-                <textarea name='description' value={book.description} onChange={handleChange} />
+                <textarea name='description' value={book.description} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -103,7 +128,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Page Count:</label>
               </td>
               <td>
-                <input type='number' name='pageCount' value={book.pageCount} onChange={handleChange} />
+                <input type='number' name='pageCount' value={book.pageCount} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -116,6 +141,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                   name='categories'
                   value={book.categories.join(', ')}
                   onChange={(ev) => handleChange({ target: { name: 'categories', value: ev.target.value.split(', ') } })}
+                  required
                 />
               </td>
             </tr>
@@ -124,7 +150,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Thumbnail:</label>
               </td>
               <td>
-                <input type='text' name='thumbnail' value={book.thumbnail} onChange={handleChange} />
+                <input type='text' name='thumbnail' value={book.thumbnail} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -132,7 +158,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <label>Language:</label>
               </td>
               <td>
-                <input type='text' name='language' value={book.language} onChange={handleChange} />
+                <input type='text' name='language' value={book.language} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -149,6 +175,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                       target: { name: 'listPrice', value: { ...book.listPrice, amount: +ev.target.value } },
                     })
                   }
+                  required
                 />
               </td>
               <td>
@@ -160,6 +187,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                       target: { name: 'listPrice', value: { ...book.listPrice, currencyCode: ev.target.value } },
                     })
                   }
+                  required
                 >
                   <option value='USD'>USD</option>
                   <option value='EUR'>EUR</option>
@@ -184,7 +212,9 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
           </tbody>
         </table>
         <div className='action-buttons'>
-          <button onClick={handleSave}>Save</button>
+          <button onClick={handleSave} disabled={isSaveDisabled}>
+            Save
+          </button>
           <button onClick={handleCancel}>Cancel</button>
         </div>
       </form>
