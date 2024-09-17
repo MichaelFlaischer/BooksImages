@@ -1,4 +1,5 @@
 import { bookService } from './services/book.service.js'
+import { BookFilter } from './BookFilter.jsx'
 
 export function BookIndex() {
   const { useEffect, useState } = React
@@ -22,6 +23,7 @@ export function BookIndex() {
   return (
     <section>
       <h2>BookIndex</h2>
+      <BookFilter></BookFilter>
       {books && (
         <ul>
           {books.map((book) => (
