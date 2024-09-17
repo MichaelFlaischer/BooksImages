@@ -1,13 +1,23 @@
 import { bookService } from './services/book.service.js'
 import { BookFilter } from './BookFilter.jsx'
+import { BookList } from './BookList.jsx'
+import { BookDetails } from './BookDetails.jsx'
 
 export function BookIndex() {
   const { useEffect, useState } = React
   const [books, setBooks] = useState(null)
+  const [showBook, setShowBook] = useState(null)
 
   useEffect(() => {
     loadBooks()
   }, [])
+
+  useEffect(() => {
+    if (showBook !== null) {
+      console.log('Show Details')
+      console.log(showBook)
+    }
+  }, [showBook])
 
   function loadBooks() {
     bookService
@@ -18,20 +28,27 @@ export function BookIndex() {
       })
   }
 
+  function showBookDetails(book) {
+    setShowBook(book)
+  }
+
+  function closeShowBookDetails() {
+    setShowBook(null)
+  }
+
   if (!books) return <div>Loading...</div>
 
   return (
     <section>
       <h2>BookIndex</h2>
-      <BookFilter></BookFilter>
-      {books && (
-        <ul>
-          {books.map((book) => (
-            <li key={book.id}>
-              {book.title} - {book.authors.join(', ')} - {book.publishedDate}
-            </li>
-          ))}
-        </ul>
+      {showBook ? (
+        <BookDetails book={showBook} closeFunc={closeShowBookDetails} />
+      ) : (
+        <React.Fragment>
+          {' '}
+          <BookFilter />
+          <BookList books={books} showfunc={showBookDetails} />
+        </React.Fragment>
       )}
     </section>
   )
