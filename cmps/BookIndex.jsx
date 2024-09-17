@@ -5,24 +5,21 @@ import { BookDetails } from './BookDetails.jsx'
 
 export function BookIndex() {
   const { useEffect, useState } = React
-  const [books, setBooks] = useState(null)
+  const [booksList, setBooksList] = useState(null)
+  const [filteredBooks, setFilteredBooks] = useState(null)
   const [showBook, setShowBook] = useState(null)
 
   useEffect(() => {
     loadBooks()
   }, [])
 
-  useEffect(() => {
-    if (showBook !== null) {
-      console.log('Show Details')
-      console.log(showBook)
-    }
-  }, [showBook])
-
   function loadBooks() {
     bookService
       .query()
-      .then(setBooks)
+      .then((books) => {
+        setBooksList(books)
+        setFilteredBooks(books)
+      })
       .catch((err) => {
         console.log('Problem getting books', err)
       })
@@ -36,18 +33,24 @@ export function BookIndex() {
     setShowBook(null)
   }
 
-  if (!books) return <div>Loading...</div>
+  function updateBooksToShow(books) {
+    setFilteredBooks(books)
+  }
+
+  if (!booksList) return <div>Loading...</div>
 
   return (
     <section>
-      <h2>BookIndex</h2>
       {showBook ? (
-        <BookDetails book={showBook} closeFunc={closeShowBookDetails} />
+        <React.Fragment>
+          <h2>{showBook.title}</h2>
+          <BookDetails book={showBook} closeFunc={closeShowBookDetails} />
+        </React.Fragment>
       ) : (
         <React.Fragment>
-          {' '}
-          <BookFilter />
-          <BookList books={books} showfunc={showBookDetails} />
+          <h2>BookIndex</h2>
+          <BookFilter books={booksList} setFilteredBooks={updateBooksToShow} />
+          <BookList books={filteredBooks} showfunc={showBookDetails} />
         </React.Fragment>
       )}
     </section>
