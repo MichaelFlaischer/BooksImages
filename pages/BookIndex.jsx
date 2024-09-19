@@ -1,8 +1,8 @@
-import { bookService } from './services/book.service.js'
-import { BookFilter } from './BookFilter.jsx'
-import { BookList } from './BookList.jsx'
-import { BookDetails } from './BookDetails.jsx'
-import { BookEdit } from './BookEdit.jsx'
+import { bookService } from '../services/book.service.js'
+import { BookFilter } from '../cmps/BookFilter.jsx'
+import { BookList } from '../cmps/BookList.jsx'
+import { BookDetails } from '../cmps/BookDetails.jsx'
+import { BookEdit } from '../cmps/BookEdit.jsx'
 
 export function BookIndex() {
   const { useEffect, useState } = React

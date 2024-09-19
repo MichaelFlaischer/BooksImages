@@ -1,12 +1,18 @@
 import { AppHeader } from './cmps/AppHeader.jsx'
-import { Home } from './cmps/Home.jsx'
-import { AboutUs } from './cmps/AboutUs.jsx'
-import { BookIndex } from './cmps/BookIndex.jsx'
+import { Home } from './pages/Home.jsx'
+import { AboutUs } from './pages/AboutUs.jsx'
+import { BookIndex } from './pages/BookIndex.jsx'
 
 export function App() {
   const { useState } = React
 
   const [page, setPage] = useState('home')
+
+  const pages = [
+    { name: 'home', component: <Home /> },
+    { name: 'about', component: <AboutUs /> },
+    { name: 'books', component: <BookIndex /> },
+  ]
 
   function onSetPage(page) {
     setPage(page)
@@ -15,10 +21,11 @@ export function App() {
   return (
     <section className='app'>
       <AppHeader onSetPage={onSetPage} />
-      <main className='container '>
-        {page === 'home' && <Home />}
-        {page === 'about' && <AboutUs />}
-        {page === 'books' && <BookIndex />}
+      <main className='container'>
+        {pages.map(({ name, component }) => {
+          if (page === name) return component
+          return null
+        })}
       </main>
     </section>
   )
