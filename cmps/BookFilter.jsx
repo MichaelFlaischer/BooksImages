@@ -1,59 +1,18 @@
-export function BookFilter({ books, setFilteredBooks }) {
+export function BookFilter({ filterBy, onSetFilter }) {
   const { useEffect, useState } = React
-
-  const [filterValues, setFilterValues] = useState({
-    title: '',
-    author: '',
-    minPrice: '',
-    maxPrice: '',
-    publishedDate: '',
-    category: '',
-    language: '',
-  })
-
-  useEffect(() => {
-    filterBooks()
-  }, [filterValues])
+  const [filterValues, setFilterValues] = useState(filterBy)
 
   function handleChange({ target }) {
     const { name, value } = target
-    setFilterValues((prevValues) => ({
-      ...prevValues,
-      [name]: value,
-    }))
-  }
+    let updatedValue = value
 
-  function filterBooks() {
-    let filtered = books
-
-    if (filterValues.title) {
-      filtered = filtered.filter((book) => book.title.toLowerCase().includes(filterValues.title.toLowerCase()))
+    if (name === 'maxPrice' && value === '') {
+      updatedValue = Infinity
     }
 
-    if (filterValues.author) {
-      filtered = filtered.filter((book) => book.authors.some((author) => author.toLowerCase().includes(filterValues.author.toLowerCase())))
-    }
-
-    if (filterValues.minPrice) {
-      filtered = filtered.filter((book) => book.listPrice.amount >= filterValues.minPrice)
-    }
-
-    if (filterValues.maxPrice) {
-      filtered = filtered.filter((book) => book.listPrice.amount <= filterValues.maxPrice)
-    }
-
-    if (filterValues.publishedDate) {
-      filtered = filtered.filter((book) => book.publishedDate >= parseInt(filterValues.publishedDate))
-    }
-
-    if (filterValues.category) {
-      filtered = filtered.filter((book) => book.categories.includes(filterValues.category))
-    }
-
-    if (filterValues.language) {
-      filtered = filtered.filter((book) => book.language === filterValues.language)
-    }
-    setFilteredBooks(filtered)
+    const updatedFilter = { ...filterValues, [name]: updatedValue }
+    setFilterValues(updatedFilter)
+    onSetFilter(updatedFilter)
   }
 
   return (

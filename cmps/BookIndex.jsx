@@ -8,16 +8,17 @@ export function BookIndex() {
   const { useEffect, useState } = React
   const [booksList, setBooksList] = useState(null)
   const [filteredBooks, setFilteredBooks] = useState(null)
+  const [filterBy, setFilterBy] = useState(bookService.getDefaultFilter())
   const [showBook, setShowBook] = useState(null)
   const [editBook, setEditBook] = useState(null)
 
   useEffect(() => {
     loadBooks()
-  }, [])
+  }, [filterBy])
 
   function loadBooks() {
     bookService
-      .query()
+      .query(filterBy)
       .then((books) => {
         setBooksList(books)
         setFilteredBooks(books)
@@ -66,6 +67,11 @@ export function BookIndex() {
       })
   }
 
+  function onSetFilter(newFilter) {
+    bookService.setFilterBy(newFilter)
+    setFilterBy(newFilter)
+  }
+
   if (!booksList) return <div>Loading...</div>
 
   return (
@@ -84,7 +90,7 @@ export function BookIndex() {
         <React.Fragment>
           <h2>BookIndex</h2>
           <button onClick={addNewBook}>Add New Book</button>
-          <BookFilter books={booksList} setFilteredBooks={updateBooksToShow} />
+          <BookFilter filterBy={filterBy} onSetFilter={onSetFilter} /> {/* להעביר את הפילטר והפונקציה */}
           <BookList books={filteredBooks} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} onDelete={deleteBook} />
         </React.Fragment>
       )}

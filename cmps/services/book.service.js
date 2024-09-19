@@ -2,7 +2,15 @@ import { utilService } from './util.service.js'
 import { storageService } from './async-storage.service.js'
 
 const BOOK_KEY = 'bookDB'
-var gFilterBy = { txt: '', minPrice: 0 }
+var gFilterBy = {
+  title: '',
+  author: '',
+  minPrice: 0,
+  maxPrice: Infinity,
+  publishedDate: '',
+  category: '',
+  language: '',
+}
 _createBooks()
 
 export const bookService = {
@@ -15,16 +23,38 @@ export const bookService = {
   getFilterBy,
   setFilterBy,
   addBooks,
+  getDefaultFilter,
 }
 
 function query() {
   return storageService.query(BOOK_KEY).then((books) => {
-    if (gFilterBy.txt) {
-      const regex = new RegExp(gFilterBy.txt, 'i')
+    if (gFilterBy.title) {
+      const regex = new RegExp(gFilterBy.title, 'i')
       books = books.filter((book) => regex.test(book.title))
     }
-    if (gFilterBy.minPrice) {
+
+    if (gFilterBy.author) {
+      const regex = new RegExp(gFilterBy.author, 'i')
+      books = books.filter((book) => book.authors.some((author) => regex.test(author)))
+    }
+
+    if (gFilterBy.minPrice !== undefined) {
       books = books.filter((book) => book.listPrice.amount >= gFilterBy.minPrice)
+    }
+    if (gFilterBy.maxPrice !== undefined && gFilterBy.maxPrice !== Infinity) {
+      books = books.filter((book) => book.listPrice.amount <= gFilterBy.maxPrice)
+    }
+
+    if (gFilterBy.publishedDate) {
+      books = books.filter((book) => book.publishedDate >= gFilterBy.publishedDate)
+    }
+
+    if (gFilterBy.category) {
+      books = books.filter((book) => book.categories.includes(gFilterBy.category))
+    }
+
+    if (gFilterBy.language) {
+      books = books.filter((book) => book.language === gFilterBy.language)
     }
 
     return books
@@ -78,9 +108,27 @@ function getFilterBy() {
   return { ...gFilterBy }
 }
 
+function getDefaultFilter() {
+  return {
+    title: '',
+    author: '',
+    minPrice: 0,
+    maxPrice: Infinity,
+    publishedDate: '',
+    category: '',
+    language: '',
+  }
+}
+
 function setFilterBy(filterBy = {}) {
-  if (filterBy.txt !== undefined) gFilterBy.txt = filterBy.txt
+  if (filterBy.title !== undefined) gFilterBy.title = filterBy.title
+  if (filterBy.author !== undefined) gFilterBy.author = filterBy.author
   if (filterBy.minPrice !== undefined) gFilterBy.minPrice = filterBy.minPrice
+  if (filterBy.maxPrice !== undefined) gFilterBy.maxPrice = filterBy.maxPrice
+  if (filterBy.publishedDate !== undefined) gFilterBy.publishedDate = filterBy.publishedDate
+  if (filterBy.category !== undefined) gFilterBy.category = filterBy.category
+  if (filterBy.language !== undefined) gFilterBy.language = filterBy.language
+
   return gFilterBy
 }
 
