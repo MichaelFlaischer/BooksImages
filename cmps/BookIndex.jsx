@@ -72,7 +72,12 @@ export function BookIndex() {
     setFilterBy(newFilter)
   }
 
-  if (!booksList) return <div>Loading...</div>
+  if (!booksList)
+    return (
+      <div className='loader-container'>
+        <div className='loader'></div>
+      </div>
+    )
 
   return (
     <section>
