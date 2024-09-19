@@ -1,6 +1,13 @@
 import { LongTxt } from './LongTxt.jsx'
 
 export function BookDetails({ book, closeFunc }) {
+  const { useState } = React
+
+  const [isImageLoaded, setIsImageLoaded] = useState(false)
+
+  const defaultImageUrl = 'https://uxwing.com/wp-content/themes/uxwing/download/web-app-development/image-not-found-icon.png'
+  const bookImageUrl = book.thumbnail || defaultImageUrl
+
   const getPageCountText = () => {
     if (book.pageCount > 500) return 'Serious Reading'
     if (book.pageCount > 200) return 'Descent Reading'
@@ -21,8 +28,14 @@ export function BookDetails({ book, closeFunc }) {
     return ''
   }
 
+  const handleImageLoad = () => {
+    setIsImageLoaded(true)
+  }
+
   return (
     <div className='book-details'>
+      {!isImageLoaded && <div className='loader'></div>}
+      <img src={bookImageUrl} alt={book.title} onLoad={handleImageLoad} onError={(e) => (e.target.src = defaultImageUrl)} />
       <table>
         <tbody>
           <tr>

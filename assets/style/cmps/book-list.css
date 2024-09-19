@@ -24,6 +24,11 @@
   text-align: center;
 }
 
+.book-item img {
+  height: 100px;
+  width: 60px;
+}
+
 .book-item h3 {
   margin: 0;
   font-size: 1.2rem;
@@ -52,5 +57,5 @@
 }
 
 .book-item:hover {
-  transform: scale(1.05); /* אפקט hover */
+  transform: scale(1.05);
 }

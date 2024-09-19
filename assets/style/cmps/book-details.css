@@ -32,3 +32,8 @@
   color: orange;
   margin-left: 10px;
 }
+
+.book-details img {
+  height: 100px;
+  width: 60px;
+}
