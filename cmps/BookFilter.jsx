@@ -1,3 +1,5 @@
+import { bookService } from './services/book.service.js'
+
 export function BookFilter({ filterBy, onSetFilter }) {
   const { useEffect, useState } = React
   const [filterValues, setFilterValues] = useState(filterBy)
@@ -13,6 +15,12 @@ export function BookFilter({ filterBy, onSetFilter }) {
     const updatedFilter = { ...filterValues, [name]: updatedValue }
     setFilterValues(updatedFilter)
     onSetFilter(updatedFilter)
+  }
+
+  function resetFilter() {
+    const defaultFilter = bookService.getDefaultFilter()
+    setFilterValues(defaultFilter)
+    onSetFilter(defaultFilter)
   }
 
   return (
@@ -95,6 +103,13 @@ export function BookFilter({ filterBy, onSetFilter }) {
                   <option value='de'>German</option>
                   <option value='it'>Italian</option>
                 </select>
+              </td>
+            </tr>
+            <tr>
+              <td colSpan='2'>
+                <button type='button' onClick={resetFilter}>
+                  Reset Filter
+                </button>
               </td>
             </tr>
           </tbody>

@@ -90,7 +90,7 @@ export function BookIndex() {
         <React.Fragment>
           <h2>BookIndex</h2>
           <button onClick={addNewBook}>Add New Book</button>
-          <BookFilter filterBy={filterBy} onSetFilter={onSetFilter} /> {/* להעביר את הפילטר והפונקציה */}
+          <BookFilter filterBy={filterBy} onSetFilter={onSetFilter} />
           <BookList books={filteredBooks} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} onDelete={deleteBook} />
         </React.Fragment>
       )}
