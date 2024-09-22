@@ -1,8 +1,8 @@
+const { useState } = React
+
 import { LongTxt } from './LongTxt.jsx'
 
 export function BookDetails({ book, closeFunc }) {
-  const { useState } = React
-
   const [isImageLoaded, setIsImageLoaded] = useState(false)
 
   const defaultImageUrl = 'https://uxwing.com/wp-content/themes/uxwing/download/web-app-development/image-not-found-icon.png'

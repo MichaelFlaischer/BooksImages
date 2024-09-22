@@ -1,28 +1,28 @@
-import { bookService } from './services/book.service.js'
+const { useEffect, useState } = React
 
-export function BookEdit({ bookId, closeUpdateFunc }) {
-  const { useEffect, useState } = React
-
-  const [book, setBook] = useState(bookService.getEmptyBook())
+export function BookEdit({ bookId, closeUpdateFunc, getFunc, saveFunc }) {
+  const [book, setBook] = useState(null)
   const [isSaveDisabled, setIsSaveDisabled] = useState(true)
 
   useEffect(() => {
-    if (bookId) {
-      loadBook()
-    }
-  }, [bookId])
+    loadBook()
+  }, [])
 
   useEffect(() => {
     checkIfCanSave()
   }, [book])
 
-  function loadBook() {
-    bookService
-      .get(bookId)
-      .then(setBook)
-      .catch((err) => {
+  async function loadBook() {
+    if (bookId) {
+      try {
+        const loadedBook = await getFunc(bookId)
+        setBook(loadedBook)
+      } catch (err) {
         console.log('Error loading book:', err)
-      })
+      }
+    } else {
+      setBook(getFunc())
+    }
   }
 
   function handleChange({ target }) {
@@ -34,42 +34,41 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
   }
 
   function checkIfCanSave() {
+    if (!book) return
+
     const requiredFields = [
       book.title,
       book.subtitle,
-      book.authors.length > 0,
+      book.authors && book.authors.length > 0,
       book.publishedDate,
       book.description,
       book.pageCount,
-      book.categories.length > 0,
+      book.categories && book.categories.length > 0,
       book.thumbnail,
       book.language,
-      book.listPrice.amount,
+      book.listPrice && book.listPrice.amount,
     ]
 
     const allFieldsFilled = requiredFields.every((field) => Boolean(field))
     setIsSaveDisabled(!allFieldsFilled)
   }
 
-  function handleSave() {
+  async function handleSave() {
     if (isSaveDisabled) return
-    bookService
-      .save(book)
-      .then(() => {
-        bookService.query().then((books) => {
-          closeUpdateFunc(books)
-        })
-      })
-      .catch((err) => {
-        console.log('Error saving book:', err)
-      })
+    await saveFunc(book)
+    closeUpdateFunc()
   }
 
   function handleCancel() {
-    bookService.query().then((books) => {
-      closeUpdateFunc(books)
-    })
+    closeUpdateFunc()
   }
+
+  if (!book)
+    return (
+      <div className='loader-container'>
+        <div className='loader'></div>
+      </div>
+    )
 
   return (
     <section className='book-edit'>
@@ -101,7 +100,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <input
                   type='text'
                   name='authors'
-                  value={book.authors.join(', ')}
+                  value={(book.authors || []).join(', ')}
                   onChange={(ev) => handleChange({ target: { name: 'authors', value: ev.target.value.split(', ') } })}
                   required
                 />
@@ -139,7 +138,7 @@ export function BookEdit({ bookId, closeUpdateFunc }) {
                 <input
                   type='text'
                   name='categories'
-                  value={book.categories.join(', ')}
+                  value={(book.categories || []).join(', ')}
                   onChange={(ev) => handleChange({ target: { name: 'categories', value: ev.target.value.split(', ') } })}
                   required
                 />

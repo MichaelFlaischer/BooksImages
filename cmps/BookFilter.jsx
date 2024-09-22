@@ -1,7 +1,6 @@
-import { bookService } from './services/book.service.js'
+const { useState } = React
 
-export function BookFilter({ filterBy, onSetFilter }) {
-  const { useEffect, useState } = React
+export function BookFilter({ filterBy, onSetFilter, getDefaultFilter }) {
   const [filterValues, setFilterValues] = useState(filterBy)
 
   function handleChange({ target }) {
@@ -18,7 +17,7 @@ export function BookFilter({ filterBy, onSetFilter }) {
   }
 
   function resetFilter() {
-    const defaultFilter = bookService.getDefaultFilter()
+    const defaultFilter = getDefaultFilter()
     setFilterValues(defaultFilter)
     onSetFilter(defaultFilter)
   }

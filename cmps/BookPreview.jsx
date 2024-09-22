@@ -1,6 +1,6 @@
-export function BookPreview({ book = null, showfunc = null, closeUpdateFunc = null, onDelete = null, addBookFunc = null }) {
-  const { useState } = React
+const { useState } = React
 
+export function BookPreview({ book, showfunc, closeUpdateFunc, onDelete }) {
   const [isImageLoaded, setIsImageLoaded] = useState(false)
   const defaultImageUrl = 'https://uxwing.com/wp-content/themes/uxwing/download/web-app-development/image-not-found-icon.png'
   const bookImageUrl = book ? book.thumbnail : defaultImageUrl
@@ -8,14 +8,6 @@ export function BookPreview({ book = null, showfunc = null, closeUpdateFunc = nu
   const handleImageLoad = () => {
     setIsImageLoaded(true)
   }
-
-  if (addBookFunc)
-    return (
-      <li className='book-preview book-item'>
-        <h3>Add New Book</h3>
-        <button onClick={() => addBookFunc()}>Add new book</button>
-      </li>
-    )
 
   return (
     <li className='book-preview book-item'>

@@ -1,5 +1,6 @@
+const { useState } = React
+
 export function LongTxt({ txt, length = 100 }) {
-  const { useState } = React
   const [isExpanded, setIsExpanded] = useState(false)
 
   const toggleExpand = () => {

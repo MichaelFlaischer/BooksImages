@@ -1,8 +1,8 @@
 export function AppHeader({ onSetPage }) {
   const pages = [
-    { name: 'home', label: 'Home' },
-    { name: 'about', label: 'About' },
-    { name: 'books', label: 'Book Index' },
+    { name: 'Home', page: 'home' },
+    { name: 'About', page: 'about' },
+    { name: 'Book Index', page: 'books' },
   ]
 
   return (
@@ -11,8 +11,8 @@ export function AppHeader({ onSetPage }) {
         <h1>React Book App</h1>
         <nav className='app-nav'>
           {pages.map((page) => (
-            <a key={page.name} onClick={() => onSetPage(page.name)} href='#'>
-              {page.label}
+            <a key={page.page} onClick={() => onSetPage(page.page)} href='#'>
+              {page.name}
             </a>
           ))}
         </nav>

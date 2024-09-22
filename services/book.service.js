@@ -294,7 +294,8 @@ function _createBook() {
     description: generateRandomDescription(), // שימוש בפונקציה ליצירת תיאור רנדומלי
     pageCount: utilService.getRandomIntInclusive(100, 1000),
     categories: [categories[utilService.getRandomIntInclusive(0, categories.length - 1)]],
-    thumbnail: `http://ca.org/books-photos/${utilService.getRandomIntInclusive(1, 20)}.jpg`,
+    //https://www.coding-academy.org/books-photos/2.jpg
+    thumbnail: `https://www.coding-academy.org/books-photos/${utilService.getRandomIntInclusive(1, 20)}.jpg`,
     language: language[utilService.getRandomIntInclusive(0, language.length - 1)],
     listPrice: {
       amount: randomAmount,

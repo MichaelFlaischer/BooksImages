@@ -1,3 +1,5 @@
+const { useEffect, useState } = React
+
 import { bookService } from '../services/book.service.js'
 import { BookFilter } from '../cmps/BookFilter.jsx'
 import { BookList } from '../cmps/BookList.jsx'
@@ -5,9 +7,7 @@ import { BookDetails } from '../cmps/BookDetails.jsx'
 import { BookEdit } from '../cmps/BookEdit.jsx'
 
 export function BookIndex() {
-  const { useEffect, useState } = React
   const [booksList, setBooksList] = useState(null)
-  const [filteredBooks, setFilteredBooks] = useState(null)
   const [filterBy, setFilterBy] = useState(bookService.getDefaultFilter())
   const [showBook, setShowBook] = useState(null)
   const [editBook, setEditBook] = useState(null)
@@ -21,7 +21,6 @@ export function BookIndex() {
       .query(filterBy)
       .then((books) => {
         setBooksList(books)
-        setFilteredBooks(books)
       })
       .catch((err) => {
         console.log('Problem getting books', err)
@@ -36,31 +35,29 @@ export function BookIndex() {
     setShowBook(null)
   }
 
-  function updateBooksToShow(books) {
-    setFilteredBooks(books)
-  }
-
   function editBookDetails(book) {
     setEditBook(book)
   }
 
-  function closeEditBook(books) {
+  function closeEditBook() {
     setEditBook(null)
-    setBooksList(books)
-    setFilteredBooks(books)
+    loadBooks()
   }
 
   function addNewBook() {
     setEditBook(bookService.getEmptyBook())
   }
 
+  function getBookData(bookId = null) {
+    if (!bookId) return bookService.getEmptyBook()
+    return bookService.get(bookId)
+  }
+
   function deleteBook(bookId) {
     bookService
       .remove(bookId)
       .then(() => {
-        const updatedBooks = booksList.filter((book) => book.id !== bookId)
-        setBooksList(updatedBooks)
-        setFilteredBooks(updatedBooks)
+        loadBooks()
       })
       .catch((err) => {
         console.log('Error deleting book:', err)
@@ -70,6 +67,22 @@ export function BookIndex() {
   function onSetFilter(newFilter) {
     bookService.setFilterBy(newFilter)
     setFilterBy(newFilter)
+  }
+
+  function getDefaultFilter() {
+    return bookService.getDefaultFilter()
+  }
+
+  function saveFunc(updatedBook) {
+    bookService
+      .save(updatedBook)
+      .then(() => {
+        loadBooks()
+        setEditBook(null)
+      })
+      .catch((err) => {
+        console.log('Error saving book:', err)
+      })
   }
 
   if (!booksList)
@@ -84,7 +97,7 @@ export function BookIndex() {
       {editBook ? (
         <React.Fragment>
           <h2>{editBook.id ? 'Edit Book' : 'Add Book'}</h2>
-          <BookEdit bookId={editBook.id} closeUpdateFunc={closeEditBook} />
+          <BookEdit bookId={editBook.id} closeUpdateFunc={closeEditBook} saveFunc={saveFunc} getFunc={getBookData} />
         </React.Fragment>
       ) : showBook ? (
         <React.Fragment>
@@ -94,8 +107,8 @@ export function BookIndex() {
       ) : (
         <React.Fragment>
           <h2>BookIndex</h2>
-          <BookFilter filterBy={filterBy} onSetFilter={onSetFilter} />
-          <BookList books={filteredBooks} addBookFunc={addNewBook} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} onDelete={deleteBook} />
+          <BookFilter filterBy={filterBy} onSetFilter={onSetFilter} getDefaultFilter={getDefaultFilter} />
+          <BookList books={booksList} addBookFunc={addNewBook} showfunc={showBookDetails} closeUpdateFunc={editBookDetails} onDelete={deleteBook} />
         </React.Fragment>
       )}
     </section>
