@@ -1,12 +1,29 @@
-const { useState } = React
-
+import { useState, useEffect } from 'react'
+import { useParams, useNavigate } from 'react-router-dom'
+import { bookService } from '../services/book.service.js'
 import { LongTxt } from './LongTxt.jsx'
 
-export function BookDetails({ book, closeFunc }) {
+export function BookDetails() {
+  const { bookId } = useParams()
+  const navigate = useNavigate()
+  const [book, setBook] = useState(null)
   const [isImageLoaded, setIsImageLoaded] = useState(false)
 
   const defaultImageUrl = 'https://uxwing.com/wp-content/themes/uxwing/download/web-app-development/image-not-found-icon.png'
-  const bookImageUrl = book.thumbnail || defaultImageUrl
+
+  useEffect(() => {
+    loadBook()
+  }, [bookId])
+
+  async function loadBook() {
+    try {
+      const loadedBook = await bookService.get(bookId)
+      setBook(loadedBook)
+    } catch (err) {
+      console.error('Error loading book:', err)
+      navigate(-1)
+    }
+  }
 
   const getPageCountText = () => {
     if (book.pageCount > 500) return 'Serious Reading'
@@ -31,6 +48,20 @@ export function BookDetails({ book, closeFunc }) {
   const handleImageLoad = () => {
     setIsImageLoaded(true)
   }
+
+  const handleClose = () => {
+    navigate(-1)
+  }
+
+  if (!book) {
+    return (
+      <div className='loader-container'>
+        <div className='loader'></div>
+      </div>
+    )
+  }
+
+  const bookImageUrl = book.thumbnail || defaultImageUrl
 
   return (
     <div className='book-details'>
@@ -81,7 +112,7 @@ export function BookDetails({ book, closeFunc }) {
           </tr>
         </tbody>
       </table>
-      <button onClick={closeFunc}>Close</button>
+      <button onClick={handleClose}>Close</button>
     </div>
   )
 }
