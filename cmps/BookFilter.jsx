@@ -1,7 +1,13 @@
-const { useState } = React
+const { useState, useEffect } = React
 
-export function BookFilter({ filterBy, onSetFilter, getDefaultFilter }) {
-  const [filterValues, setFilterValues] = useState(filterBy)
+import { bookService } from '../services/book.service.js'
+
+export function BookFilter({ onSetFilter }) {
+  const [filterValues, setFilterValues] = useState(bookService.getFilterBy())
+
+  useEffect(() => {
+    onSetFilter(filterValues)
+  }, [filterValues, onSetFilter])
 
   function handleChange({ target }) {
     const { name, value } = target
@@ -13,12 +19,13 @@ export function BookFilter({ filterBy, onSetFilter, getDefaultFilter }) {
 
     const updatedFilter = { ...filterValues, [name]: updatedValue }
     setFilterValues(updatedFilter)
-    onSetFilter(updatedFilter)
+    bookService.setFilterBy(updatedFilter)
   }
 
   function resetFilter() {
-    const defaultFilter = getDefaultFilter()
+    const defaultFilter = bookService.getDefaultFilter()
     setFilterValues(defaultFilter)
+    bookService.setFilterBy(defaultFilter)
     onSetFilter(defaultFilter)
   }
 
@@ -57,7 +64,14 @@ export function BookFilter({ filterBy, onSetFilter, getDefaultFilter }) {
                 <label htmlFor='maxPrice'>Max Price:</label>
               </td>
               <td>
-                <input type='number' id='maxPrice' name='maxPrice' value={filterValues.maxPrice} onChange={handleChange} placeholder='Max price' />
+                <input
+                  type='number'
+                  id='maxPrice'
+                  name='maxPrice'
+                  value={filterValues.maxPrice === Infinity ? '' : filterValues.maxPrice}
+                  onChange={handleChange}
+                  placeholder='Max price'
+                />
               </td>
             </tr>
             <tr>
