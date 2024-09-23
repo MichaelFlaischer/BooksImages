@@ -1,3 +1,5 @@
+import { bookService } from '../services/book.service.js'
+
 import { BookPreview } from './BookPreview.jsx'
 import { AddBookCard } from './AddBookCard.jsx'
 

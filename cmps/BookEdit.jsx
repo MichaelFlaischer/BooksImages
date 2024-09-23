@@ -1,6 +1,12 @@
-const { useEffect, useState } = React
+const { useState, useEffect } = React
+const { useNavigate, useParams } = ReactRouterDOM
 
-export function BookEdit({ bookId, closeUpdateFunc, getFunc, saveFunc }) {
+import { bookService } from '../services/book.service.js'
+
+export function BookEdit() {
+  const { bookId } = useParams()
+  const navigate = useNavigate()
+
   const [book, setBook] = useState(null)
   const [isSaveDisabled, setIsSaveDisabled] = useState(true)
 
@@ -15,13 +21,13 @@ export function BookEdit({ bookId, closeUpdateFunc, getFunc, saveFunc }) {
   async function loadBook() {
     if (bookId) {
       try {
-        const loadedBook = await getFunc(bookId)
+        const loadedBook = await bookService.get(bookId)
         setBook(loadedBook)
       } catch (err) {
         console.log('Error loading book:', err)
       }
     } else {
-      setBook(getFunc())
+      setBook(bookService.getEmptyBook())
     }
   }
 
@@ -55,12 +61,20 @@ export function BookEdit({ bookId, closeUpdateFunc, getFunc, saveFunc }) {
 
   async function handleSave() {
     if (isSaveDisabled) return
-    await saveFunc(book)
-    closeUpdateFunc()
+
+    bookService
+      .save(book)
+      .then((book) => {})
+      .catch((err) => {
+        console.log('err:', err)
+      })
+      .finally(() => {
+        navigate(-1)
+      })
   }
 
   function handleCancel() {
-    closeUpdateFunc()
+    navigate(-1)
   }
 
   if (!book)
