@@ -25,6 +25,7 @@ export function BookEdit() {
         setBook(loadedBook)
       } catch (err) {
         console.log('Error loading book:', err)
+        navigate(`/books/edit/SearchError`)
       }
     } else {
       setBook(bookService.getEmptyBook())
@@ -73,7 +74,7 @@ export function BookEdit() {
       })
   }
 
-  function handleCancel() {
+  function handleClost() {
     navigate(-1)
   }
 
@@ -228,7 +229,7 @@ export function BookEdit() {
           <button onClick={handleSave} disabled={isSaveDisabled}>
             Save
           </button>
-          <button onClick={handleCancel}>Cancel</button>
+          <button onClick={handleClost}>Cancel</button>
         </div>
       </form>
     </section>

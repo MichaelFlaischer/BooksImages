@@ -1,6 +1,6 @@
 import { bookService } from '../services/book.service.js'
-import { useState } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+const { useState } = React
+const { useNavigate, useParams } = ReactRouterDOM
 
 export function AddReview({ onAddReview }) {
   const { bookId } = useParams()

@@ -56,7 +56,6 @@ function query() {
     if (gFilterBy.language) {
       books = books.filter((book) => book.language === gFilterBy.language)
     }
-
     return books
   })
 }

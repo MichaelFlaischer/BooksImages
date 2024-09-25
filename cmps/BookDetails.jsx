@@ -1,5 +1,6 @@
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate } from 'react-router-dom'
+const { useState, useEffect } = React
+const { useNavigate, useParams } = ReactRouterDOM
+
 import { bookService } from '../services/book.service.js'
 import { LongTxt } from './LongTxt.jsx'
 
@@ -21,7 +22,7 @@ export function BookDetails() {
       setBook(loadedBook)
     } catch (err) {
       console.error('Error loading book:', err)
-      navigate(-1)
+      navigate(`/books/SearchError`)
     }
   }
 
