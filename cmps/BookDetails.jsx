@@ -59,6 +59,24 @@ export function BookDetails() {
     navigate(`/books/${bookId}/review`)
   }
 
+  async function goToNextBook() {
+    try {
+      const nextBookId = await bookService.getNextBookId(bookId)
+      navigate(`/books/${nextBookId}`)
+    } catch (err) {
+      console.error('Error navigating to next book:', err)
+    }
+  }
+
+  async function goToPreviousBook() {
+    try {
+      const prevBookId = await bookService.getPreviousBookId(bookId)
+      navigate(`/books/${prevBookId}`)
+    } catch (err) {
+      console.error('Error navigating to previous book:', err)
+    }
+  }
+
   if (!book) {
     return (
       <div className='loader-container'>
@@ -71,6 +89,10 @@ export function BookDetails() {
 
   return (
     <div className='book-details'>
+      <div className='navigation-buttons'>
+        <button onClick={goToPreviousBook}>Previous Book</button>
+        <button onClick={goToNextBook}>Next Book</button>
+      </div>
       {!isImageLoaded && <div className='loader'></div>}
       <img src={bookImageUrl} alt={book.title} onLoad={handleImageLoad} onError={(e) => (e.target.src = defaultImageUrl)} />
       <table>
@@ -118,8 +140,10 @@ export function BookDetails() {
           </tr>
         </tbody>
       </table>
-      <button onClick={handleClose}>Close</button>
-      <button onClick={handleAddReview}>Add Review</button>
+      <div className='buttons'>
+        <button onClick={handleClose}>Close</button>
+        <button onClick={handleAddReview}>Add Review</button>
+      </div>
       <BookReviews />
     </div>
   )

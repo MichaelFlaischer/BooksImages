@@ -20,6 +20,7 @@ export const bookService = {
   save,
   getEmptyBook,
   getNextBookId,
+  getPreviousBookId,
   getFilterBy,
   setFilterBy,
   addBooks,
@@ -153,6 +154,14 @@ function getNextBookId(bookId) {
     let nextBookIdx = books.findIndex((book) => book.id === bookId) + 1
     if (nextBookIdx === books.length) nextBookIdx = 0
     return books[nextBookIdx].id
+  })
+}
+
+function getPreviousBookId(bookId) {
+  return storageService.query(BOOK_KEY).then((books) => {
+    let prevBookIdx = books.findIndex((book) => book.id === bookId) - 1
+    if (prevBookIdx < 0) prevBookIdx = books.length - 1
+    return books[prevBookIdx].id
   })
 }
 
