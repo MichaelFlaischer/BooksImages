@@ -156,20 +156,19 @@ function getNextBookId(bookId) {
   })
 }
 
-// פונקציה ליצירת ביקורות רנדומליות
 function _createRandomReviews() {
-  const reviewsCount = utilService.getRandomIntInclusive(0, 10) // בין 0 ל-10 ביקורות
+  const reviewsCount = utilService.getRandomIntInclusive(0, 10)
   const reviews = []
   for (let i = 0; i < reviewsCount; i++) {
     reviews.push({
-      fullname: utilService.makeLorem(2), // שם רנדומלי
-      rating: utilService.getRandomIntInclusive(1, 5), // דירוג בין 1 ל-5
+      fullname: utilService.makeLorem(2),
+      rating: utilService.getRandomIntInclusive(1, 5),
       readAt: new Date(
         utilService.getRandomIntInclusive(2010, 2023),
         utilService.getRandomIntInclusive(0, 11),
         utilService.getRandomIntInclusive(1, 28)
-      ).toISOString(), // תאריך רנדומלי
-      text: utilService.makeLorem(50), // טקסט הביקורת
+      ).toISOString(),
+      text: utilService.makeLorem(50),
     })
   }
   return reviews
@@ -326,7 +325,7 @@ function _createBook() {
     subtitle: 'A thrilling read',
     authors: [authors[utilService.getRandomIntInclusive(0, authors.length - 1)]],
     publishedDate: utilService.getRandomIntInclusive(1950, 2023),
-    description: generateRandomDescription(), // שימוש בפונקציה ליצירת תיאור רנדומלי
+    description: generateRandomDescription(),
     pageCount: utilService.getRandomIntInclusive(100, 1000),
     categories: [categories[utilService.getRandomIntInclusive(0, categories.length - 1)]],
     thumbnail: `https://www.coding-academy.org/books-photos/${utilService.getRandomIntInclusive(1, 20)}.jpg`,
@@ -336,6 +335,6 @@ function _createBook() {
       currencyCode: randomCurrency[utilService.getRandomIntInclusive(0, randomCurrency.length - 1)],
       isOnSale: randomSale[utilService.getRandomIntInclusive(0, randomSale.length - 1)],
     },
-    reviews: _createRandomReviews(), // הוספת ביקורות רנדומליות
+    reviews: _createRandomReviews(),
   }
 }
