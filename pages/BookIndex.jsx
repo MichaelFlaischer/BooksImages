@@ -3,6 +3,7 @@ const { useEffect, useState } = React
 import { bookService } from '../services/book.service.js'
 import { BookFilter } from '../cmps/BookFilter.jsx'
 import { BookList } from '../cmps/BookList.jsx'
+import { eventBusService } from '../services/event-bus.service.js'
 
 export function BookIndex() {
   const [booksList, setBooksList] = useState(null)
@@ -32,9 +33,10 @@ export function BookIndex() {
       .remove(bookId)
       .then(() => {
         loadBooks()
+        eventBusService.emit('show-user-msg', { txt: 'Book deleted successfully!', type: 'success' })
       })
       .catch((err) => {
-        console.log('Error deleting book:', err)
+        eventBusService.emit('show-user-msg', { txt: 'Error deleting book', type: 'error' })
       })
   }
 

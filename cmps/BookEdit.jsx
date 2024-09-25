@@ -2,6 +2,7 @@ const { useState, useEffect } = React
 const { useNavigate, useParams } = ReactRouterDOM
 
 import { bookService } from '../services/book.service.js'
+import { eventBusService } from '../services/event-bus.service.js'
 
 export function BookEdit() {
   const { bookId } = useParams()
@@ -63,18 +64,16 @@ export function BookEdit() {
   async function handleSave() {
     if (isSaveDisabled) return
 
-    bookService
-      .save(book)
-      .then((book) => {})
-      .catch((err) => {
-        console.log('err:', err)
-      })
-      .finally(() => {
-        navigate(-1)
-      })
+    try {
+      await bookService.save(book)
+      eventBusService.emit('show-user-msg', { txt: 'Book saved successfully!', type: 'success' })
+      navigate(-1)
+    } catch (err) {
+      eventBusService.emit('show-user-msg', { txt: 'Error saving book', type: 'error' })
+    }
   }
 
-  function handleClost() {
+  function handleClose() {
     navigate(-1)
   }
 
@@ -229,7 +228,7 @@ export function BookEdit() {
           <button onClick={handleSave} disabled={isSaveDisabled}>
             Save
           </button>
-          <button onClick={handleClost}>Cancel</button>
+          <button onClick={handleClose}>Cancel</button>
         </div>
       </form>
     </section>

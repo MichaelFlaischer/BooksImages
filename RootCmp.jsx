@@ -2,6 +2,7 @@ const { Routes, Route, Navigate } = ReactRouterDOM
 const Router = ReactRouterDOM.HashRouter
 
 import { AppHeader } from './cmps/AppHeader.jsx'
+import { UserMsg } from './cmps/UserMsg.jsx'
 import { Home } from './pages/Home.jsx'
 import { AboutUs } from './pages/AboutUs.jsx'
 import { BookIndex } from './pages/BookIndex.jsx'
@@ -29,6 +30,7 @@ export function App() {
             <Route path='*' element={<ErrorPage />} />
           </Routes>
         </main>
+        <UserMsg />
       </section>
     </Router>
   )
