@@ -1,8 +1,10 @@
-import { bookService } from '../services/book.service.js'
-const { useState } = React
-const { useNavigate, useParams } = ReactRouterDOM
+const { useState, useEffect } = React
+const { useParams, useNavigate } = ReactRouterDOM
 
-export function AddReview({ onAddReview }) {
+import { bookService } from '../services/book.service.js'
+import { eventBusService } from '../services/event-bus.service.js'
+
+export function AddReview() {
   const { bookId } = useParams()
   const navigate = useNavigate()
 
@@ -11,6 +13,35 @@ export function AddReview({ onAddReview }) {
     rating: 1,
     readAt: '',
   })
+  const [bookTitle, setBookTitle] = useState('')
+  const [isSaveDisabled, setIsSaveDisabled] = useState(true)
+  const [selectedRating, setSelectedRating] = useState(review.rating)
+
+  useEffect(() => {
+    bookService
+      .get(bookId)
+      .then((book) => {
+        if (!book) {
+          navigate('/books/SearchError')
+        } else {
+          setBookTitle(book.title)
+        }
+      })
+      .catch((err) => {
+        console.error('Error loading book:', err)
+        navigate('/books/SearchError')
+      })
+  }, [bookId])
+
+  useEffect(() => {
+    checkIfCanSave()
+  }, [review])
+
+  function checkIfCanSave() {
+    const { fullname, rating, readAt } = review
+    const canSave = fullname.trim() && rating && readAt.trim()
+    setIsSaveDisabled(!canSave)
+  }
 
   function handleChange({ target }) {
     const { name, value } = target
@@ -20,39 +51,84 @@ export function AddReview({ onAddReview }) {
     }))
   }
 
-  function handleSubmit(ev) {
+  function handleStarClick(rating) {
+    setSelectedRating(rating)
+    setReview((prevReview) => ({
+      ...prevReview,
+      rating,
+    }))
+  }
+
+  function handleGoBack() {
+    navigate(-1)
+  }
+
+  function onSubmit(ev) {
     ev.preventDefault()
-    bookService.addReview(bookId, review).then(() => {
-      onAddReview(review)
-      setReview({ fullname: '', rating: 1, readAt: '' })
-      navigate(-1)
-    })
+    if (isSaveDisabled) return
+
+    bookService
+      .addReview(bookId, review)
+      .then(() => {
+        eventBusService.emit('show-user-msg', { txt: 'Review added successfully!', type: 'success' })
+        setReview({ fullname: '', rating: 1, readAt: '' })
+        navigate(-1)
+      })
+      .catch((err) => {
+        eventBusService.emit('show-user-msg', { txt: 'Failed to add review', type: 'error' })
+        navigate(-1)
+      })
   }
 
   return (
-    <form onSubmit={handleSubmit}>
-      <label>
-        Full name:
-        <input type='text' name='fullname' value={review.fullname} onChange={handleChange} required />
-      </label>
-
-      <label>
-        Rating:
-        <select name='rating' value={review.rating} onChange={handleChange} required>
-          <option value='1'>1 Star</option>
-          <option value='2'>2 Stars</option>
-          <option value='3'>3 Stars</option>
-          <option value='4'>4 Stars</option>
-          <option value='5'>5 Stars</option>
-        </select>
-      </label>
-
-      <label>
-        Read at:
-        <input type='date' name='readAt' value={review.readAt} onChange={handleChange} required />
-      </label>
-
-      <button type='submit'>Add Review</button>
-    </form>
+    <section className='add-review'>
+      <h3>Add Review for "{bookTitle}"</h3>
+      <form onSubmit={onSubmit}>
+        <table>
+          <tbody>
+            <tr>
+              <td>
+                <label htmlFor='fullname'>Fullname:</label>
+              </td>
+              <td>
+                <input type='text' id='fullname' name='fullname' value={review.fullname} onChange={handleChange} required />
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label>Rating:</label>
+              </td>
+              <td>
+                <div className='star-rating'>
+                  {[5, 4, 3, 2, 1].map((num) => (
+                    <React.Fragment key={num}>
+                      <input type='radio' id={`star${num}`} name='rating' value={num} checked={selectedRating === num} onChange={() => handleStarClick(num)} />
+                      <label htmlFor={`star${num}`} title={`${num} stars`}>
+                        ★
+                      </label>
+                    </React.Fragment>
+                  ))}
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <label htmlFor='readAt'>Read At:</label>
+              </td>
+              <td>
+                <input type='date' id='readAt' name='readAt' value={review.readAt} onChange={handleChange} required />
+              </td>
+            </tr>
+            <tr>
+              <td></td>
+              <td>
+                <button disabled={isSaveDisabled}>Add Review</button>
+                <button onClick={handleGoBack}>Go Back</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </form>
+    </section>
   )
 }

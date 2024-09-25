@@ -3,6 +3,7 @@ const { useNavigate, useParams } = ReactRouterDOM
 
 import { bookService } from '../services/book.service.js'
 import { LongTxt } from './LongTxt.jsx'
+import { BookReviews } from './BookReviews.jsx'
 
 export function BookDetails() {
   const { bookId } = useParams()
@@ -51,7 +52,11 @@ export function BookDetails() {
   }
 
   const handleClose = () => {
-    navigate(-1)
+    navigate(`/books/`)
+  }
+
+  const handleAddReview = () => {
+    navigate(`/books/${bookId}/review`)
   }
 
   if (!book) {
@@ -114,6 +119,8 @@ export function BookDetails() {
         </tbody>
       </table>
       <button onClick={handleClose}>Close</button>
+      <button onClick={handleAddReview}>Add Review</button>
+      <BookReviews />
     </div>
   )
 }

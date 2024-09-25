@@ -24,6 +24,8 @@ export const bookService = {
   setFilterBy,
   addBooks,
   getDefaultFilter,
+  addReview,
+  removeReview,
 }
 
 function query() {
@@ -119,6 +121,21 @@ function getDefaultFilter() {
   }
 }
 
+function addReview(bookId, review) {
+  return storageService.get(BOOK_KEY, bookId).then((book) => {
+    if (!book.reviews) book.reviews = []
+    book.reviews.push(review)
+    return storageService.put(BOOK_KEY, book)
+  })
+}
+
+function removeReview(bookId, reviewIdx) {
+  return storageService.get(BOOK_KEY, bookId).then((book) => {
+    book.reviews.splice(reviewIdx, 1)
+    return storageService.put(BOOK_KEY, book)
+  })
+}
+
 function setFilterBy(filterBy = {}) {
   if (filterBy.title !== undefined) gFilterBy.title = filterBy.title
   if (filterBy.author !== undefined) gFilterBy.author = filterBy.author
@@ -137,6 +154,25 @@ function getNextBookId(bookId) {
     if (nextBookIdx === books.length) nextBookIdx = 0
     return books[nextBookIdx].id
   })
+}
+
+// פונקציה ליצירת ביקורות רנדומליות
+function _createRandomReviews() {
+  const reviewsCount = utilService.getRandomIntInclusive(0, 10) // בין 0 ל-10 ביקורות
+  const reviews = []
+  for (let i = 0; i < reviewsCount; i++) {
+    reviews.push({
+      fullname: utilService.makeLorem(2), // שם רנדומלי
+      rating: utilService.getRandomIntInclusive(1, 5), // דירוג בין 1 ל-5
+      readAt: new Date(
+        utilService.getRandomIntInclusive(2010, 2023),
+        utilService.getRandomIntInclusive(0, 11),
+        utilService.getRandomIntInclusive(1, 28)
+      ).toISOString(), // תאריך רנדומלי
+      text: utilService.makeLorem(50), // טקסט הביקורת
+    })
+  }
+  return reviews
 }
 
 function _createBooks() {
@@ -293,7 +329,6 @@ function _createBook() {
     description: generateRandomDescription(), // שימוש בפונקציה ליצירת תיאור רנדומלי
     pageCount: utilService.getRandomIntInclusive(100, 1000),
     categories: [categories[utilService.getRandomIntInclusive(0, categories.length - 1)]],
-    //https://www.coding-academy.org/books-photos/2.jpg
     thumbnail: `https://www.coding-academy.org/books-photos/${utilService.getRandomIntInclusive(1, 20)}.jpg`,
     language: language[utilService.getRandomIntInclusive(0, language.length - 1)],
     listPrice: {
@@ -301,5 +336,6 @@ function _createBook() {
       currencyCode: randomCurrency[utilService.getRandomIntInclusive(0, randomCurrency.length - 1)],
       isOnSale: randomSale[utilService.getRandomIntInclusive(0, randomSale.length - 1)],
     },
+    reviews: _createRandomReviews(), // הוספת ביקורות רנדומליות
   }
 }

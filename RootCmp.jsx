@@ -10,6 +10,7 @@ import { BookDetails } from './cmps/BookDetails.jsx'
 import { BookEdit } from './cmps/BookEdit.jsx'
 import { ErrorPage } from './pages/ErrorPage.jsx'
 import { SearchError } from './cmps/SearchError.jsx'
+import { AddReview } from './cmps/AddReview.jsx'
 
 export function App() {
   return (
@@ -23,10 +24,10 @@ export function App() {
             <Route path='/about' element={<AboutUs />} />
             <Route path='/books' element={<BookIndex />} />
             <Route path='/books/:bookId' element={<BookDetails />} />
-            <Route path='/books/SearchError' element={<SearchError />} />
+            <Route path='/books/:bookId/review' element={<AddReview />} />
+            <Route path='/books/search-error' element={<SearchError />} />
             <Route path='/books/edit' element={<BookEdit />} />
             <Route path='/books/edit/:bookId' element={<BookEdit />} />
-            <Route path='/books/edit/SearchError' element={<SearchError />} />
             <Route path='*' element={<ErrorPage />} />
           </Routes>
         </main>
