@@ -22,7 +22,6 @@ async function queryGoogleBooks(searchTerm) {
   const data = await res.json()
 
   if (!data.items) return []
-  console.log(data.items)
 
   const books = data.items.map(_mapGoogleBook)
 
