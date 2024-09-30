@@ -2,6 +2,7 @@ const { useState, useEffect } = React
 const { useNavigate, useParams } = ReactRouterDOM
 
 import { bookService } from '../services/book.service.js'
+import { GoogleBookSearch } from './GoogleBookSearch.jsx'
 import { eventBusService } from '../services/event-bus.service.js'
 
 export function BookEdit() {
@@ -41,6 +42,17 @@ export function BookEdit() {
     }))
   }
 
+  function handleListPriceChange({ target }) {
+    const { name, value } = target
+    setBook((prevBook) => ({
+      ...prevBook,
+      listPrice: {
+        ...prevBook.listPrice,
+        [name]: name === 'amount' ? +value : value,
+      },
+    }))
+  }
+
   function checkIfCanSave() {
     if (!book) return
 
@@ -63,7 +75,6 @@ export function BookEdit() {
 
   async function handleSave() {
     if (isSaveDisabled) return
-
     try {
       await bookService.save(book)
       eventBusService.emit('show-user-msg', { txt: 'Book saved successfully!', type: 'success' })
@@ -77,6 +88,19 @@ export function BookEdit() {
     navigate(-1)
   }
 
+  function handleGoogleBookSelect(googleBook) {
+    const safeGoogleBook = {
+      ...googleBook,
+      authors: googleBook.authors || [],
+      categories: googleBook.categories || [],
+      listPrice: googleBook.listPrice || { amount: 0, currencyCode: 'USD', isOnSale: false },
+      publishedDate: googleBook.publishedDate || '',
+      thumbnail: googleBook.thumbnail || '',
+      language: googleBook.language || 'en',
+    }
+    setBook(safeGoogleBook)
+  }
+
   if (!book)
     return (
       <div className='loader-container'>
@@ -87,6 +111,9 @@ export function BookEdit() {
   return (
     <section className='book-edit'>
       <h2>{bookId ? 'Edit Book' : 'Add New Book'}</h2>
+
+      <GoogleBookSearch onBookSelect={handleGoogleBookSelect} />
+
       <form onSubmit={(ev) => ev.preventDefault()}>
         <table>
           <tbody>
@@ -95,7 +122,7 @@ export function BookEdit() {
                 <label>Title:</label>
               </td>
               <td>
-                <input type='text' name='title' value={book.title} onChange={handleChange} required />
+                <input type='text' name='title' value={book.title || ''} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -103,7 +130,7 @@ export function BookEdit() {
                 <label>Subtitle:</label>
               </td>
               <td>
-                <input type='text' name='subtitle' value={book.subtitle} onChange={handleChange} required />
+                <input type='text' name='subtitle' value={book.subtitle || ''} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -125,7 +152,7 @@ export function BookEdit() {
                 <label>Published Date:</label>
               </td>
               <td>
-                <input type='number' name='publishedDate' value={book.publishedDate} onChange={handleChange} required />
+                <input type='text' name='publishedDate' value={book.publishedDate || ''} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -133,7 +160,7 @@ export function BookEdit() {
                 <label>Description:</label>
               </td>
               <td>
-                <textarea name='description' value={book.description} onChange={handleChange} required />
+                <textarea name='description' value={book.description || ''} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -141,7 +168,7 @@ export function BookEdit() {
                 <label>Page Count:</label>
               </td>
               <td>
-                <input type='number' name='pageCount' value={book.pageCount} onChange={handleChange} required />
+                <input type='number' name='pageCount' value={book.pageCount || 0} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -163,7 +190,7 @@ export function BookEdit() {
                 <label>Thumbnail:</label>
               </td>
               <td>
-                <input type='text' name='thumbnail' value={book.thumbnail} onChange={handleChange} required />
+                <input type='text' name='thumbnail' value={book.thumbnail || ''} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -171,7 +198,7 @@ export function BookEdit() {
                 <label>Language:</label>
               </td>
               <td>
-                <input type='text' name='language' value={book.language} onChange={handleChange} required />
+                <input type='text' name='language' value={book.language || 'en'} onChange={handleChange} required />
               </td>
             </tr>
             <tr>
@@ -179,29 +206,10 @@ export function BookEdit() {
                 <label>List Price:</label>
               </td>
               <td>
-                <input
-                  type='number'
-                  name='amount'
-                  value={book.listPrice.amount}
-                  onChange={(ev) =>
-                    handleChange({
-                      target: { name: 'listPrice', value: { ...book.listPrice, amount: +ev.target.value } },
-                    })
-                  }
-                  required
-                />
+                <input type='number' name='amount' value={book.listPrice.amount || 0} onChange={handleListPriceChange} required />
               </td>
               <td>
-                <select
-                  name='currencyCode'
-                  value={book.listPrice.currencyCode}
-                  onChange={(ev) =>
-                    handleChange({
-                      target: { name: 'listPrice', value: { ...book.listPrice, currencyCode: ev.target.value } },
-                    })
-                  }
-                  required
-                >
+                <select name='currencyCode' value={book.listPrice.currencyCode || 'USD'} onChange={handleListPriceChange} required>
                   <option value='USD'>USD</option>
                   <option value='EUR'>EUR</option>
                   <option value='ILS'>ILS</option>
@@ -212,10 +220,10 @@ export function BookEdit() {
                   On Sale:
                   <input
                     type='checkbox'
-                    checked={book.listPrice.isOnSale}
+                    checked={book.listPrice.isOnSale || false}
                     onChange={(ev) =>
-                      handleChange({
-                        target: { name: 'listPrice', value: { ...book.listPrice, isOnSale: ev.target.checked } },
+                      handleListPriceChange({
+                        target: { name: 'isOnSale', value: ev.target.checked },
                       })
                     }
                   />
