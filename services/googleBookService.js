@@ -1,4 +1,7 @@
 import { utilService } from './util.service.js'
+import { storageService } from './async-storage.service.js'
+
+const GOOGLE_BOOKS_KEY = 'googleBooksCache'
 
 export const googleBookService = {
   queryGoogleBooks,
@@ -6,6 +9,15 @@ export const googleBookService = {
 }
 
 async function queryGoogleBooks(searchTerm) {
+  const cachedBooks = await storageService.query(GOOGLE_BOOKS_KEY)
+  const cachedResult = cachedBooks.find((entry) => entry.searchTerm === searchTerm)
+
+  if (cachedResult) {
+    console.log('Loading books from cache')
+    return cachedResult.books
+  }
+
+  console.log('Fetching books from Google Books API')
   const res = await fetch(`https://www.googleapis.com/books/v1/volumes?printType=books&q=${searchTerm}`)
   const data = await res.json()
 
@@ -13,6 +25,9 @@ async function queryGoogleBooks(searchTerm) {
   console.log(data.items)
 
   const books = data.items.map(_mapGoogleBook)
+
+  const cacheEntry = { searchTerm, books }
+  await storageService.post(GOOGLE_BOOKS_KEY, cacheEntry)
 
   return books
 }
