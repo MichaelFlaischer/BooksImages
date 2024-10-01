@@ -19,8 +19,10 @@ export function GoogleBookSearch({ onBookSelect }) {
   }, [googleSearchTerm])
 
   useEffect(() => {
-    if (debouncedTerm) {
+    if (debouncedTerm && debouncedTerm.trim()) {
       handleGoogleSearch(debouncedTerm)
+    } else {
+      setGoogleBooks([])
     }
   }, [debouncedTerm])
 
