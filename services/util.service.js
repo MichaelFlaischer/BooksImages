@@ -8,6 +8,7 @@ export const utilService = {
   getDayName,
   getMonthName,
   parseDate,
+  getTruthyValues,
 }
 
 function makeId(length = 6) {
@@ -101,4 +102,15 @@ function parseDate(dateStr) {
   const date = new Date(year, month - 1, day)
 
   return date
+}
+
+export function getTruthyValues(obj) {
+  const newObj = {}
+  for (const key in obj) {
+    const value = obj[key]
+    if (value || value === 0) {
+      newObj[key] = value
+    }
+  }
+  return newObj
 }

@@ -1,12 +1,36 @@
 const { useState, useEffect } = React
+const { useSearchParams } = ReactRouterDOM
 
 import { bookService } from '../services/book.service.js'
+import { utilService } from '../services/util.service.js'
 
 export function BookFilter({ onSetFilter }) {
+  const [searchParams, setSearchParams] = useSearchParams()
   const [filterValues, setFilterValues] = useState(bookService.getFilterBy())
+  const [isFirstLoad, setIsFirstLoad] = useState(true)
 
   useEffect(() => {
-    onSetFilter(filterValues)
+    if (isFirstLoad) {
+      const initialFilter = {
+        title: searchParams.get('title') || '',
+        author: searchParams.get('author') || '',
+        minPrice: searchParams.get('minPrice') || '',
+        maxPrice: searchParams.get('maxPrice') || '',
+        publishedDate: searchParams.get('publishedDate') || '',
+        category: searchParams.get('category') || '',
+        language: searchParams.get('language') || '',
+      }
+
+      setFilterValues(initialFilter)
+      onSetFilter(initialFilter)
+      setIsFirstLoad(false)
+    }
+  }, [isFirstLoad, searchParams, onSetFilter])
+
+  useEffect(() => {
+    if (!isFirstLoad) {
+      onSetFilter(filterValues)
+    }
   }, [filterValues, onSetFilter])
 
   function handleChange({ target }) {
@@ -20,6 +44,9 @@ export function BookFilter({ onSetFilter }) {
     const updatedFilter = { ...filterValues, [name]: updatedValue }
     setFilterValues(updatedFilter)
     bookService.setFilterBy(updatedFilter)
+
+    const truthyFilterValues = utilService.getTruthyValues(updatedFilter)
+    setSearchParams(truthyFilterValues)
   }
 
   function resetFilter() {
@@ -27,6 +54,7 @@ export function BookFilter({ onSetFilter }) {
     setFilterValues(defaultFilter)
     bookService.setFilterBy(defaultFilter)
     onSetFilter(defaultFilter)
+    setSearchParams({})
   }
 
   return (
