@@ -27,6 +27,9 @@ export const bookService = {
   getDefaultFilter,
   addReview,
   removeReview,
+  groupBooksBy,
+  groupBooksByPageCount,
+  groupBooksByPrice,
 }
 
 function query() {
@@ -243,7 +246,7 @@ function _createBook() {
 
   const categories = ['Fiction', 'Literature', 'Classic', 'Adventure', 'Fantasy']
   const language = ['en', 'es', 'fr', 'de', 'it']
-  const randomAmount = utilService.getRandomIntInclusive(20, 150)
+  const randomAmount = utilService.getRandomIntInclusive(10, 300)
   const randomCurrency = ['USD', 'EUR', 'ILS']
   const randomSale = [true, false]
 
@@ -346,4 +349,64 @@ function _createBook() {
     },
     reviews: _createRandomReviews(),
   }
+}
+
+function groupBooksBy(field) {
+  return storageService.query(BOOK_KEY).then((books) => {
+    return books.reduce((map, book) => {
+      if (Array.isArray(book[field])) {
+        // אם השדה הוא מערך (כמו 'categories' או 'authors')
+        book[field].forEach((item) => {
+          if (!map[item]) map[item] = 0
+          map[item]++
+        })
+      } else {
+        // עבור שדות שאינם מערכים
+        const key = book[field]
+        if (!map[key]) map[key] = 0
+        map[key]++
+      }
+      return map
+    }, {})
+  })
+}
+
+function groupBooksByPageCount(books) {
+  return new Promise((resolve) => {
+    const result = books.reduce((map, book) => {
+      if (book.pageCount > 500) {
+        if (!map['Serious Reading']) map['Serious Reading'] = 0
+        map['Serious Reading']++
+      } else if (book.pageCount > 200) {
+        if (!map['Descent Reading']) map['Descent Reading'] = 0
+        map['Descent Reading']++
+      } else if (book.pageCount < 100) {
+        if (!map['Light Reading']) map['Light Reading'] = 0
+        map['Light Reading']++
+      }
+      return map
+    }, {})
+    resolve(result)
+  })
+}
+
+function groupBooksByPrice(books) {
+  return new Promise((resolve) => {
+    const result = books.reduce((map, book) => {
+      if (book.listPrice.amount > 150) {
+        if (!map['Expensive']) map['Expensive'] = 0
+        map['Expensive']++
+      } else if (book.listPrice.amount < 20) {
+        if (!map['Cheap']) map['Cheap'] = 0
+        map['Cheap']++
+      }
+      return map
+    }, {})
+
+    // Always include 'Expensive' and 'Cheap', even if no books fit
+    if (!result['Expensive']) result['Expensive'] = 0
+    if (!result['Cheap']) result['Cheap'] = 0
+
+    resolve(result)
+  })
 }

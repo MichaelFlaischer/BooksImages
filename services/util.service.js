@@ -101,7 +101,7 @@ function parseDate(dateStr) {
 
   const date = new Date(year, month - 1, day)
 
-  return date
+  return date.getFullYear()
 }
 
 export function getTruthyValues(obj) {

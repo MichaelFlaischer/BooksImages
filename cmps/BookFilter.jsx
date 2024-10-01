@@ -15,7 +15,7 @@ export function BookFilter({ onSetFilter }) {
         title: searchParams.get('title') || '',
         author: searchParams.get('author') || '',
         minPrice: searchParams.get('minPrice') || '',
-        maxPrice: searchParams.get('maxPrice') || '',
+        maxPrice: searchParams.get('maxPrice') || Infinity,
         publishedDate: searchParams.get('publishedDate') || '',
         category: searchParams.get('category') || '',
         language: searchParams.get('language') || '',

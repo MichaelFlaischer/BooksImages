@@ -11,6 +11,7 @@ import { BookEdit } from './cmps/BookEdit.jsx'
 import { ErrorPage } from './pages/ErrorPage.jsx'
 import { SearchError } from './cmps/SearchError.jsx'
 import { AddReview } from './cmps/AddReview.jsx'
+import { Dashboard } from './pages/Dashboard.jsx' // ייבוא של דף הדשבורד
 
 export function App() {
   return (
@@ -28,6 +29,7 @@ export function App() {
             <Route path='/books/search-error' element={<SearchError />} />
             <Route path='/books/edit' element={<BookEdit />} />
             <Route path='/books/edit/:bookId' element={<BookEdit />} />
+            <Route path='/dashboard' element={<Dashboard />} />
             <Route path='*' element={<ErrorPage />} />
           </Routes>
         </main>
